@@ -1,11 +1,636 @@
 <!doctype html>
 <html lang="uz">
 <head>
-  <meta charset="utf-8">
-  <title>Kombimath</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kombinatorika PRO — WEB</title>
+  <style>
+    :root{
+      --bg:#0b1220; --panel:#0f172a; --panel2:#0b1326;
+      --text:#e5e7eb; --muted:#94a3b8; --border:rgba(148,163,184,.18);
+      --accent:#60a5fa; --accent2:#34d399; --danger:#fb7185;
+      --shadow: 0 10px 35px rgba(0,0,0,.35);
+      --radius:18px;
+    }
+    [data-theme="light"]{
+      --bg:#f7fafc; --panel:#ffffff; --panel2:#f4f7fb;
+      --text:#0f172a; --muted:#64748b; --border:rgba(15,23,42,.12);
+      --accent:#2563eb; --accent2:#059669; --danger:#e11d48;
+      --shadow: 0 10px 35px rgba(2,6,23,.10);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; color:var(--text); background:
+        radial-gradient(1200px 600px at 20% -10%, rgba(96,165,250,.25), transparent 55%),
+        radial-gradient(900px 500px at 90% 10%, rgba(52,211,153,.18), transparent 55%),
+        var(--bg);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      min-height:100vh;
+    }
+    .wrap{max-width:1100px; margin:0 auto; padding:18px}
+    header{
+      position:sticky; top:0; z-index:20;
+      backdrop-filter: blur(10px);
+      background: color-mix(in srgb, var(--bg) 72%, transparent);
+      border-bottom:1px solid var(--border);
+    }
+    .head{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 18px;}
+    .brand{display:flex; gap:12px; align-items:center}
+    .logo{width:38px; height:38px; border-radius:14px; background: linear-gradient(135deg, var(--accent), var(--accent2)); box-shadow: var(--shadow);}
+    h1{margin:0; font-size:16px; letter-spacing:.2px}
+    .sub{margin:2px 0 0; color:var(--muted); font-size:12px}
+    .actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .pill{
+      border:1px solid var(--border); background: color-mix(in srgb, var(--panel) 80%, transparent);
+      padding:9px 12px; border-radius:999px; display:flex; gap:10px; align-items:center;
+      box-shadow: 0 2px 12px rgba(0,0,0,.08);
+    }
+    .pill small{color:var(--muted)}
+    .toggle{
+      width:46px; height:26px; border-radius:999px; border:1px solid var(--border);
+      background: color-mix(in srgb, var(--panel2) 70%, transparent);
+      position:relative; cursor:pointer; flex: 0 0 auto;
+    }
+    .knob{
+      width:20px; height:20px; border-radius:999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      position:absolute; top:2px; left:2px;
+      transition: transform .18s ease;
+      box-shadow: 0 6px 18px rgba(0,0,0,.25);
+    }
+    [data-theme="light"] .knob{ transform: translateX(20px); }
+
+    .grid{display:grid; grid-template-columns: 1.1fr .9fr; gap:14px; margin-top:16px;}
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
+
+    .card{
+      background: color-mix(in srgb, var(--panel) 92%, transparent);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .inner{padding:14px}
+    .muted{color:var(--muted); font-size:12px}
+    h2{margin:0 0 8px; font-size:14px; letter-spacing:.2px}
+
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:end}
+    label{display:block; font-size:12px; color:var(--muted); margin-bottom:6px}
+    input{
+      width:160px; max-width: 100%;
+      padding:11px 12px;
+      border-radius:14px; border:1px solid var(--border);
+      background: color-mix(in srgb, var(--panel2) 78%, transparent);
+      color:var(--text);
+      outline:none;
+    }
+    input:focus{border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); box-shadow: 0 0 0 4px rgba(96,165,250,.12)}
+
+    .btns{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
+    button{
+      padding:10px 12px; border-radius:14px; border:1px solid var(--border);
+      background: color-mix(in srgb, var(--panel2) 78%, transparent);
+      color:var(--text);
+      cursor:pointer; font-weight:700; letter-spacing:.2px;
+      transition: transform .08s ease, background .15s ease, border-color .15s ease;
+    }
+    button:hover{ background: color-mix(in srgb, var(--panel2) 88%, transparent); }
+    button:active{ transform: translateY(1px); }
+    .primary{
+      border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+      background: linear-gradient(135deg,
+        color-mix(in srgb, var(--panel2) 65%, transparent),
+        color-mix(in srgb, var(--accent) 12%, transparent)
+      );
+    }
+    .danger{ border-color: color-mix(in srgb, var(--danger) 55%, var(--border)); }
+
+    .tabs{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
+    .tab{
+      padding:9px 12px; border-radius:999px;
+      border:1px solid var(--border);
+      background: color-mix(in srgb, var(--panel2) 78%, transparent);
+      color:var(--muted);
+      cursor:pointer; font-weight:800; font-size:12px;
+    }
+    .tab.active{
+      color:var(--text);
+      border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+      background: linear-gradient(135deg,
+        color-mix(in srgb, var(--accent) 14%, transparent),
+        color-mix(in srgb, var(--accent2) 10%, transparent)
+      );
+    }
+
+    .box{
+      margin-top:12px;
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      background: color-mix(in srgb, var(--panel2) 78%, transparent);
+      padding:12px;
+    }
+    .boxTitle{display:flex; justify-content:space-between; align-items:center; gap:10px}
+    .boxTitle strong{font-size:13px}
+    .boxTitle span{font-size:12px; color:var(--muted)}
+    pre{
+      margin:10px 0 0; white-space:pre-wrap; word-break:break-word;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:12.5px; line-height:1.5;
+      color: color-mix(in srgb, var(--text) 92%, transparent);
+    }
+
+    .miniGrid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px}
+    @media (max-width: 520px){ .miniGrid{grid-template-columns:1fr} }
+    .kpi{
+      border:1px solid var(--border);
+      border-radius:16px;
+      background: color-mix(in srgb, var(--panel2) 80%, transparent);
+      padding:12px;
+    }
+    .kpi .name{color:var(--muted); font-size:12px}
+    .kpi .val{margin-top:8px; font-weight:900; font-size:14px; word-break:break-word}
+    .kpi .math{opacity:.9; font-weight:800; font-size:12px; color:var(--muted); margin-top:4px}
+
+    .chipRow{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+    .chip{
+      padding:7px 10px; border-radius:999px; border:1px solid var(--border);
+      background: color-mix(in srgb, var(--panel2) 80%, transparent);
+      color:var(--muted); cursor:pointer; font-weight:800; font-size:12px;
+    }
+    .chip:hover{color:var(--text)}
+
+    .toast{position: fixed; right: 16px; bottom: 16px; z-index: 50; display:flex; flex-direction:column; gap:10px;}
+    .toastItem{
+      width:min(420px, calc(100vw - 32px));
+      background: color-mix(in srgb, var(--panel) 92%, transparent);
+      border:1px solid var(--border);
+      border-radius:16px;
+      box-shadow: var(--shadow);
+      padding:12px;
+      display:flex; gap:10px; align-items:flex-start;
+      animation: pop .18s ease-out;
+    }
+    @keyframes pop{from{transform:translateY(8px); opacity:.0} to{transform:translateY(0); opacity:1}}
+    .dot{width:10px; height:10px; border-radius:999px; margin-top:4px; background: var(--accent2); box-shadow: 0 0 0 4px rgba(52,211,153,.12); flex:0 0 auto;}
+    .dot.err{background: var(--danger); box-shadow: 0 0 0 4px rgba(251,113,133,.12);}
+    .toastItem .t{font-weight:900; font-size:13px}
+    .toastItem .m{color:var(--muted); font-size:12px; margin-top:4px}
+    .toastItem .x{margin-left:auto; cursor:pointer; color:var(--muted); padding:2px 8px; border-radius:10px; border:1px solid var(--border);}
+
+    .hist{max-height: 330px; overflow:auto; padding-right:6px;}
+    .histItem{
+      border:1px dashed var(--border);
+      border-radius:16px;
+      padding:10px;
+      margin-top:10px;
+      background: color-mix(in srgb, var(--panel2) 75%, transparent);
+    }
+    .histTop{display:flex; justify-content:space-between; gap:10px; align-items:center; flex-wrap:wrap}
+    .histTop b{font-size:12.5px}
+    .histTop small{color:var(--muted)}
+    .copyBtn{
+      padding:6px 10px; border-radius:12px; border:1px solid var(--border);
+      background: transparent; color:var(--muted); cursor:pointer; font-weight:800; font-size:12px;
+    }
+    .copyBtn:hover{color:var(--text)}
+  </style>
 </head>
+
 <body>
-  <h1>Kombimath ishlayapti ✅</h1>
-  <p>Agar buni ko‘rsangiz — Netlify to‘g‘ri ulandi.</p>
+<header>
+  <div class="head wrap">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <h1>Kombinatorika PRO • WEB</h1>
+        <div class="sub">A(n,k), Ā(n,k), P(n), P̄(n), C(n,k) — Natija / Nazariya / Statistika + History</div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <div class="pill">
+        <small>Theme</small>
+        <div class="toggle" id="themeToggle" role="switch" aria-label="Dark/Light">
+          <div class="knob"></div>
+        </div>
+      </div>
+
+      <div class="pill">
+        <small>Status:</small>
+        <span id="statusText" style="font-weight:900;color:var(--accent2)">Tayyor ✅</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="grid">
+    <section class="card">
+      <div class="inner">
+        <h2>Hisoblash paneli</h2>
+        <div class="muted">n va k kiriting, keyin formula tugmasini bosing.</div>
+
+        <div class="row" style="margin-top:12px">
+          <div>
+            <label for="n">n (0..∞)</label>
+            <input id="n" type="number" min="0" value="4" />
+          </div>
+          <div>
+            <label for="k">k (0..∞)</label>
+            <input id="k" type="number" min="0" value="2" />
+          </div>
+        </div>
+
+        <div class="chipRow">
+          <span class="chip" data-preset="4,2">n=4 k=2</span>
+          <span class="chip" data-preset="6,3">n=6 k=3</span>
+          <span class="chip" data-preset="10,5">n=10 k=5</span>
+          <span class="chip" data-preset="15,7">n=15 k=7</span>
+          <span class="chip" data-preset="20,10">n=20 k=10</span>
+        </div>
+
+        <div class="btns">
+          <button class="primary" data-kind="A">A(n,k)</button>
+          <button class="primary" data-kind="A_rep">Ā(n,k)</button>
+          <button class="primary" data-kind="P">P(n)</button>
+          <button class="primary" data-kind="P_rep">P̄(n)</button>
+          <button class="primary" data-kind="C">C(n,k)</button>
+          <button class="danger" id="clearBtn">Tozalash</button>
+        </div>
+
+        <div class="tabs">
+          <div class="tab active" data-tab="result">Natija</div>
+          <div class="tab" data-tab="theory">Nazariya</div>
+          <div class="tab" data-tab="stats">Statistika</div>
+        </div>
+
+        <div class="box" id="panel-result">
+          <div class="boxTitle">
+            <strong id="resultTitle">Natija</strong>
+            <span id="metaLine">—</span>
+          </div>
+          <pre id="output">Natija shu yerda chiqadi. Tugmalardan birini bosing.</pre>
+        </div>
+
+        <div class="box" id="panel-theory" style="display:none">
+          <div class="boxTitle">
+            <strong>Nazariya</strong>
+            <span>Formulalar va izoh</span>
+          </div>
+          <pre id="theory"></pre>
+        </div>
+
+        <div class="box" id="panel-stats" style="display:none">
+          <div class="boxTitle">
+            <strong>Statistika</strong>
+            <span>Bir joyda umumiy ko‘rsatkichlar</span>
+          </div>
+          <pre id="stats"></pre>
+        </div>
+      </div>
+    </section>
+
+    <aside class="card">
+      <div class="inner">
+        <h2>Ko‘rsatkichlar</h2>
+        <div class="muted">Tezkor ko‘rinish va oxirgi hisob-kitoblar.</div>
+
+        <div class="miniGrid">
+          <div class="kpi">
+            <div class="name">A(n,k)</div>
+            <div class="val" id="kpiA">—</div>
+            <div class="math">A(n,k)= n!/(n−k)!</div>
+          </div>
+          <div class="kpi">
+            <div class="name">C(n,k)</div>
+            <div class="val" id="kpiC">—</div>
+            <div class="math">C(n,k)= n!/(k!(n−k)!)</div>
+          </div>
+          <div class="kpi">
+            <div class="name">P(n)</div>
+            <div class="val" id="kpiP">—</div>
+            <div class="math">P(n)= n!</div>
+          </div>
+          <div class="kpi">
+            <div class="name">Ā(n,k)</div>
+            <div class="val" id="kpiARep">—</div>
+            <div class="math">Ā(n,k)= n^k</div>
+          </div>
+        </div>
+
+        <div class="box" style="margin-top:12px">
+          <div class="boxTitle">
+            <strong>History</strong>
+            <span id="histCount">0 ta</span>
+          </div>
+          <div class="hist" id="history"></div>
+        </div>
+
+        <div class="muted" style="margin-top:10px">
+          Eslatma: faktorial/daraja juda tez o‘sadi. Juda katta n uchun brauzer sekinlashishi mumkin.
+        </div>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const $ = (s) => document.querySelector(s);
+  const $$ = (s) => document.querySelectorAll(s);
+
+  function nowStr(){
+    const d = new Date();
+    return d.toLocaleString(undefined, {year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit"});
+  }
+
+  function formatBigInt(x){
+    const s = x.toString();
+    const neg = s.startsWith("-");
+    const digits = neg ? s.slice(1) : s;
+    let out = "";
+    for (let i=0; i<digits.length; i++){
+      const idx = digits.length - i;
+      out += digits[i];
+      if (idx>1 && idx%3===1) out += " ";
+    }
+    return neg ? "-" + out : out;
+  }
+
+  function toast(title, message, type="ok"){
+    const box = document.createElement("div");
+    box.className = "toastItem";
+    box.innerHTML = `
+      <div class="dot ${type==="err" ? "err" : ""}"></div>
+      <div>
+        <div class="t">${title}</div>
+        <div class="m">${message}</div>
+      </div>
+      <div class="x" title="Yopish">✕</div>
+    `;
+    $("#toast").appendChild(box);
+    const kill = () => box.remove();
+    box.querySelector(".x").onclick = kill;
+    setTimeout(kill, 4200);
+  }
+
+  function setStatus(text, ok=true){
+    $("#statusText").textContent = text;
+    $("#statusText").style.color = ok ? "var(--accent2)" : "var(--danger)";
+  }
+
+  // BigInt math
+  const bi = (x) => BigInt(x);
+
+  function factorialBig(n){
+    if (n < 0) throw new Error("n manfiy bo‘lmasin!");
+    let r = 1n;
+    for (let i=2n; i<=bi(n); i++) r *= i;
+    return r;
+  }
+
+  function powBig(a, b){
+    let base = bi(a), exp = bi(b);
+    if (exp < 0n) throw new Error("k manfiy bo‘lmasin!");
+    let r = 1n;
+    while (exp > 0n){
+      if (exp & 1n) r *= base;
+      base *= base;
+      exp >>= 1n;
+    }
+    return r;
+  }
+
+  function A_n_k(n,k){
+    if (k>n) throw new Error("0 ≤ k ≤ n shart bajarilmadi!");
+    return factorialBig(n) / factorialBig(n-k);
+  }
+  function A_n_k_rep(n,k){ return powBig(n,k); }
+  function P_n(n){ return factorialBig(n); }
+  function P_n_rep(n){ return powBig(n,n); }
+
+  // Multiplicative C(n,k)
+  function C_n_k(n,k){
+    if (k>n) throw new Error("0 ≤ k ≤ n shart bajarilmadi!");
+    k = Math.min(k, n-k);
+    let r = 1n;
+    for (let i=1; i<=k; i++){
+      r = (r * bi(n - k + i)) / bi(i);
+    }
+    return r;
+  }
+
+  function theory_text(n,k){
+    const lines = [];
+    lines.push("📘 NAZARIY IZOH (KOMBINATORIKA)");
+    lines.push("");
+    lines.push("Takrorsiz o‘rinlashtirish:");
+    lines.push("A(n,k) = n! / (n-k)!");
+    if (0<=k && k<=n) lines.push(`A(${n},${k}) = ${formatBigInt(A_n_k(n,k))}`);
+    lines.push("");
+    lines.push("Takrorli o‘rinlashtirish:");
+    lines.push("Ā(n,k) = n^k");
+    lines.push(`Ā(${n},${k}) = ${formatBigInt(A_n_k_rep(n,k))}`);
+    lines.push("");
+    lines.push("Takrorsiz o‘rin almashtirish (permutatsiya):");
+    lines.push("P(n) = n!");
+    lines.push(`P(${n}) = ${formatBigInt(P_n(n))}`);
+    lines.push("");
+    lines.push("Takrorli o‘rin almashtirish:");
+    lines.push("P̄(n) = n^n");
+    lines.push(`P̄(${n}) = ${formatBigInt(P_n_rep(n))}`);
+    lines.push("");
+    lines.push("Kombinatsiya:");
+    lines.push("C(n,k) = n! / (k!(n-k)!)");
+    if (0<=k && k<=n) lines.push(`C(${n},${k}) = ${formatBigInt(C_n_k(n,k))}`);
+    lines.push("");
+    lines.push("🔎 Qo‘shimcha:");
+    lines.push("• C(n,k) bu versiyada faktorialsiz (multiplikativ) usul bilan hisoblanadi.");
+    return lines.join("\n");
+  }
+
+  const history = [];
+  const MAX_HISTORY = 12;
+
+  function renderHistory(){
+    const el = $("#history");
+    el.innerHTML = "";
+    $("#histCount").textContent = `${history.length} ta`;
+    history.forEach((h, idx) => {
+      const item = document.createElement("div");
+      item.className = "histItem";
+      item.innerHTML = `
+        <div class="histTop">
+          <div>
+            <b>${h.title}</b><br/>
+            <small>${h.time} • n=${h.n}, k=${h.k}</small>
+          </div>
+          <button class="copyBtn" data-copy="${idx}">Copy</button>
+        </div>
+        <pre style="margin-top:8px">${h.value}</pre>
+      `;
+      el.appendChild(item);
+    });
+
+    $$(".copyBtn").forEach(btn => {
+      btn.onclick = async () => {
+        const i = Number(btn.dataset.copy);
+        const txt = history[i]?.raw || "";
+        try{
+          await navigator.clipboard.writeText(txt);
+          toast("Nusxa olindi", "Natija clipboard’ga ko‘chirildi.");
+        }catch{
+          toast("Xatolik", "Clipboard ruxsati berilmadi.", "err");
+        }
+      };
+    });
+  }
+
+  function switchTab(name){
+    $("#panel-result").style.display = (name==="result") ? "" : "none";
+    $("#panel-theory").style.display  = (name==="theory") ? "" : "none";
+    $("#panel-stats").style.display   = (name==="stats") ? "" : "none";
+    $$(".tab").forEach(t => t.classList.toggle("active", t.dataset.tab===name));
+  }
+
+  function parseInputs(){
+    const n = Number($("#n").value);
+    const k = Number($("#k").value);
+
+    if (!Number.isInteger(n) || !Number.isInteger(k))
+      throw new Error("n va k butun son bo‘lishi kerak!");
+    if (n < 0 || k < 0)
+      throw new Error("n va k manfiy bo‘lmasin!");
+
+    if (n > 50){
+      const ok = confirm("Ogohlantirish:\n\nn juda katta (50+). Hisoblash sekinlashishi mumkin.\nDavom etamizmi?");
+      if (!ok) throw new Error("Bekor qilindi");
+    }
+    return {n,k};
+  }
+
+  function setKPIs(n,k){
+    $("#kpiP").textContent = formatBigInt(P_n(n));
+    $("#kpiARep").textContent = formatBigInt(A_n_k_rep(n,k));
+    $("#kpiA").textContent = (k<=n) ? formatBigInt(A_n_k(n,k)) : "—";
+    $("#kpiC").textContent = (k<=n) ? formatBigInt(C_n_k(n,k)) : "—";
+  }
+
+  function calculate(kind){
+    try{
+      const {n,k} = parseInputs();
+
+      let title = "";
+      let result = 0n;
+
+      if (kind === "A"){
+        if (k>n) throw new Error("0 ≤ k ≤ n shart bajarilmadi!");
+        title = `Takrorsiz o‘rinlashtirish A(${n},${k})`;
+        result = A_n_k(n,k);
+      } else if (kind === "A_rep"){
+        title = `Takrorli o‘rinlashtirish Ā(${n},${k})`;
+        result = A_n_k_rep(n,k);
+      } else if (kind === "P"){
+        title = `Takrorsiz o‘rin almashtirish P(${n})`;
+        result = P_n(n);
+      } else if (kind === "P_rep"){
+        title = `Takrorli o‘rin almashtirish P̄(${n})`;
+        result = P_n_rep(n);
+      } else if (kind === "C"){
+        if (k>n) throw new Error("0 ≤ k ≤ n shart bajarilmadi!");
+        title = `Kombinatsiya C(${n},${k})`;
+        result = C_n_k(n,k);
+      } else return;
+
+      const resFmt = formatBigInt(result);
+      $("#resultTitle").textContent = title;
+      $("#metaLine").textContent = `${nowStr()} • raqamlar: ${resFmt.length}`;
+      $("#output").textContent = `Natija:\n\n${title} = ${resFmt}`;
+
+      $("#theory").textContent = theory_text(n,k);
+
+      const A = (k<=n) ? formatBigInt(A_n_k(n,k)) : "—";
+      const C = (k<=n) ? formatBigInt(C_n_k(n,k)) : "—";
+      $("#stats").textContent =
+`📊 STATISTIKA
+
+n = ${n}
+k = ${k}
+
+A(n,k) = ${A}
+Ā(n,k) = ${formatBigInt(A_n_k_rep(n,k))}
+P(n) = ${formatBigInt(P_n(n))}
+P̄(n) = ${formatBigInt(P_n_rep(n))}
+C(n,k) = ${C}
+
+🧠 Xulosa:
+Kombinatorik formulalar tez o‘suvchi (faktorial / darajali).
+`;
+
+      setKPIs(n,k);
+
+      const raw = `${title} = ${result.toString()}`;
+      history.unshift({ time: nowStr(), title, n, k, value: `${title} = ${resFmt}`, raw });
+      if (history.length > MAX_HISTORY) history.pop();
+      renderHistory();
+
+      setStatus("Hisoblandi ✅", true);
+      toast("Tayyor", title);
+      switchTab("result");
+    }catch(e){
+      if (String(e.message).includes("Bekor qilindi")){
+        setStatus("Bekor qilindi", false);
+        toast("Bekor qilindi", "Hisoblash bekor qilindi.", "err");
+        return;
+      }
+      setStatus("Xatolik ❌", false);
+      toast("Xato", e.message || "Noma’lum xato", "err");
+    }
+  }
+
+  function clearAll(){
+    $("#output").textContent = "Natija shu yerda chiqadi. Tugmalardan birini bosing.";
+    $("#theory").textContent = "";
+    $("#stats").textContent = "";
+    $("#resultTitle").textContent = "Natija";
+    $("#metaLine").textContent = "—";
+    $("#kpiA").textContent = "—";
+    $("#kpiC").textContent = "—";
+    $("#kpiP").textContent = "—";
+    $("#kpiARep").textContent = "—";
+    setStatus("Tozalandi", true);
+    toast("Tozalandi", "Panel tozalandi.");
+  }
+
+  function setTheme(theme){
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+  }
+  function toggleTheme(){
+    const cur = document.documentElement.getAttribute("data-theme") || "dark";
+    setTheme(cur === "dark" ? "light" : "dark");
+  }
+  $("#themeToggle").onclick = toggleTheme;
+  setTheme(localStorage.getItem("theme") || "dark");
+
+  $$(".tab").forEach(t => t.addEventListener("click", ()=> switchTab(t.dataset.tab)));
+  $$("button[data-kind]").forEach(btn => btn.addEventListener("click", ()=> calculate(btn.dataset.kind)));
+  $$("[data-preset]").forEach(chip => {
+    chip.addEventListener("click", ()=>{
+      const [n,k] = chip.dataset.preset.split(",").map(Number);
+      $("#n").value = n;
+      $("#k").value = k;
+      toast("Preset", `n=${n}, k=${k} qo‘yildi.`);
+      try{ setKPIs(n,k); }catch{}
+      $("#theory").textContent = theory_text(n,k);
+    });
+  });
+  $("#clearBtn").onclick = clearAll;
+
+  $("#theory").textContent = theory_text(4,2);
+  try{ setKPIs(4,2); }catch{}
+  renderHistory();
+</script>
 </body>
 </html>
